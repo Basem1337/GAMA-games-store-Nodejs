@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema({
     gamePoster:
      { 
       type: String,
-      required: true 
+    //   required: true 
       
     }, 
     gameName: 
@@ -35,6 +35,11 @@ const productSchema = new mongoose.Schema({
      required: true,
      default:0 
      },
+     originalPrice: { 
+        type: Number, 
+        default: null 
+    }
+     ,
     rating: 
     { 
         type: Number,

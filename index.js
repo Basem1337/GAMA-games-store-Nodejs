@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 
 //connection to db
 //  mongoose.connect('mongodb+srv://alaaalsayed231:nodejs_123@gamestoredb.sg6p3.mongodb.net/?retryWrites=true&w=majority&appName=GAMEStoreDB', {
-    mongoose.connect('mongodb+srv://basem1337:bmAdmin1337@gama.gz7sz.mongodb.net/?retryWrites=true&w=majority&appName=GAMA', {
+    mongoose.connect('mongodb+srv://basem1337:bmAdmin1337@gama.gz7sz.mongodb.net/sales?retryWrites=true&w=majority&appName=GAMA', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -38,6 +38,7 @@ app.use((req, res, next) => {
 
 
 
+app.use('/uploads', express.static('uploads'));
 
 app.use('/products',GameRoute);
 app.use('/category',CategoryRoute);
