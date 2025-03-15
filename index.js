@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 
 app.use('/uploads', express.static('uploads'));
 
-app.use('/products',GameRoute);
+app.use('/products/games',GameRoute);
 app.use('/category',CategoryRoute);
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
