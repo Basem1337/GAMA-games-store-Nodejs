@@ -6,7 +6,6 @@ const Router = express.Router();
 const Product = require('../models/Game');
 const Category = require('../models/category');
 
-
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/'); 
@@ -16,15 +15,13 @@ const storage = multer.diskStorage({
     }
 });
 
-
 const fileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
         cb(null, true);
     } else {
-        cb(new Error('Only images is allowed'), false);
+        cb(new Error('Only images are allowed'), false);
     }
 };
-
 
 const upload = multer({
     storage: storage,
@@ -32,7 +29,7 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-
+// GET all games
 Router.get('/', async (req, res) => {
     try {
         const products = await Product.find().populate('category');
@@ -55,50 +52,7 @@ Router.get('/:id', async (req, res) => {
     }
 });
 
-// // POST  game
-
-// Router.post('/', upload.single('gamePoster'), async (req, res) => {
-//     try {
-//         let categoryId = req.body.category;
-
-//         if (!categoryId) {
-//             const defaultCategory = await Category.findOne({ name: "Default" });
-//             if (!defaultCategory) {
-//                 const newCategory = new Category({ name: "Default" });
-//                 const savedCategory = await newCategory.save();
-//                 categoryId = savedCategory._id;
-//             } else {
-//                 categoryId = defaultCategory._id;
-//             }
-//         }
-
-//         let newGame = new Product({
-//             gamePoster: req.file ? req.file.path : null, // Save file path if uploaded
-//             gameName: req.body.gameName,
-//             company: req.body.company,
-//             category: categoryId,
-//             description: req.body.description,
-//             price: req.body.price,
-//             originalPrice: req.body.originalPrice ? req.body.originalPrice : req.body.price,
-//             rating: req.body.rating || 0,
-//             trailer: req.body.trailer
-//         });
-
-//         newGame = await newGame.save();
-
-//         if (!newGame) {
-//             return res.status(500).json({ success: false, message: 'The game could not be created' });
-//         }
-
-//         res.status(201).json(newGame);
-//     } catch (error) {
-//         res.status(500).json({ success: false, message: 'Error creating game', error });
-//     }
-// });
-
-
-
-
+// POST game
 Router.post('/', upload.single('gamePoster'), async (req, res) => {
     try {
         console.log("Uploaded file:", req.file); 
@@ -114,18 +68,15 @@ Router.post('/', upload.single('gamePoster'), async (req, res) => {
             return res.status(400).json({ success: false, message: "Category is required. Please select a category." });
         }
 
-       
         if (!mongoose.Types.ObjectId.isValid(categoryId)) {
             return res.status(400).json({ success: false, message: "Invalid category id" });
         }
 
-       
         const existingCategory = await Category.findById(categoryId);
         if (!existingCategory) {
             return res.status(400).json({ success: false, message: "Category does not exist. Please select a valid category." });
         }
 
-       
         const imageUrl = `${req.protocol}://${req.get('host')}/${req.file.path.replace(/\\/g, '/')}`;
 
         const newGame = new Product({
@@ -137,7 +88,9 @@ Router.post('/', upload.single('gamePoster'), async (req, res) => {
             price: req.body.price,
             originalPrice: req.body.originalPrice ? req.body.originalPrice : req.body.price,
             rating: req.body.rating || 0,
-            trailer: req.body.trailer
+            trailer: req.body.trailer,
+            releaseYear: req.body.releaseYear, 
+            discount: req.body.discount || 0   
         });
 
         const savedGame = await newGame.save();
@@ -148,41 +101,52 @@ Router.post('/', upload.single('gamePoster'), async (req, res) => {
     }
 });
 
-
-// PUT update game 
+// update game 
 Router.put('/:id', upload.single('gamePoster'), async (req, res) => {
-    if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(400).send('Invalid product ID');
+    const { id } = req.params;
+    const { category } = req.body;
+
+    if (!mongoose.isValidObjectId(id)) {
+        return res.status(400).json({ message: "Invalid game ID format" });
+    }
+    
+    if (!mongoose.isValidObjectId(category)) {
+        return res.status(400).json({ message: "Invalid category ID format" });
     }
 
-    const categoryExists = await Category.findById(req.body.category);
+    const categoryExists = await Category.findById(category);
     if (!categoryExists) {
-        return res.status(400).json({ success: false, message: 'Invalid category ID' });
+        return res.status(400).json({ message: "Category does not exist" });
     }
 
     const updateData = {
         gameName: req.body.gameName,
         company: req.body.company,
-        category: req.body.category,
+        category,
         description: req.body.description,
         price: req.body.price,
-        originalPrice: req.body.originalPrice ? req.body.originalPrice : req.body.price,
+        originalPrice: req.body.originalPrice || req.body.price,
         rating: req.body.rating || 0,
-        trailer: req.body.trailer
+        trailer: req.body.trailer,
+        releaseYear: req.body.releaseYear, 
+        discount: req.body.discount || 0 
     };
 
-    
     if (req.file) {
         updateData.gamePoster = req.file.path;
     }
 
-    const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    try {
+        const updatedGame = await Product.findByIdAndUpdate(id, updateData, { new: true });
 
-    if (!product) {
-        return res.status(404).json({ message: "The game was not found" });
+        if (!updatedGame) {
+            return res.status(404).json({ message: "Game not found" });
+        }
+
+        res.status(200).json(updatedGame);
+    } catch (error) {
+        res.status(500).json({ message: "Error updating game", error: error.message });
     }
-
-    res.status(200).json(product);
 });
 
 // DELETE game
@@ -199,7 +163,7 @@ Router.delete('/:id', async (req, res) => {
     }
 });
 
-
+// filter by category 
 Router.get('/filter', async (req, res) => {
     try {
         let filter = {};

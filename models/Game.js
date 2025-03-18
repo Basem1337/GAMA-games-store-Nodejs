@@ -49,6 +49,15 @@ const productSchema = new mongoose.Schema({
      },
     trailer: { 
         type: String 
+    },
+    releaseYear: { 
+        type: Number, 
+        required: true 
+    }, 
+    discount: { 
+        type: Number, 
+        enum: [0, 20], 
+        default: 0 
     }
 
 
