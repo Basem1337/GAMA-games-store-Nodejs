@@ -63,6 +63,7 @@ Router.post('/', upload.single('gamePoster'), async (req, res) => {
         }
 
         let categoryId = req.body.category ? req.body.category.trim().replace(/^"|"$/g, '') : null;
+        let trailerUrl = req.body.trailer ? req.body.trailer.trim().replace(/^"|"$/g, '') : null;
 
         if (!categoryId) {
             return res.status(400).json({ success: false, message: "Category is required. Please select a category." });
@@ -93,12 +94,16 @@ Router.post('/', upload.single('gamePoster'), async (req, res) => {
             discount: req.body.discount || 0   
         });
 
+
+        console.log(req.trailer);
         const savedGame = await newGame.save();
         res.status(201).json(savedGame);
     } catch (error) {
         console.error("Error saving game:", error);
         res.status(500).json({ success: false, message: 'Error creating game', error });
     }
+    console.log("Trailer received:", req.body.trailer);
+
 });
 
 // update game 
