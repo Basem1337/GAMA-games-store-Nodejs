@@ -20,6 +20,8 @@ const Product = require('./models/Game');
 const GameRoute=require('./routers/GameRoutes');
 const Category = require('./models/category');
 const CategoryRoute=require('./routers/Categories');
+const userRoutes = require("./routers/users.js")
+
 
 app.use((req, res, next) => {
     console.log('Raw Body:', req.body);
@@ -42,6 +44,8 @@ app.use('/uploads', express.static('uploads'));
 
 app.use('/products/games',GameRoute);
 app.use('/category',CategoryRoute);
+app.use("/users",userRoutes)
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 })
