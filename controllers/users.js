@@ -52,4 +52,12 @@ async function loginUser(req,res,next){
     res.status(200).json(token)
 }
 
-module.exports = {registerUser,loginUser}
+async function getUser(req,res,next){
+    const userId = req.userId
+
+    const user = await User.findById(userId)
+
+    res.json(user)
+}
+
+module.exports = {registerUser,loginUser,getUser}
