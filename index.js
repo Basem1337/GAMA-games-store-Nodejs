@@ -20,6 +20,12 @@ const Product = require('./models/Game');
 const GameRoute=require('./routers/GameRoutes');
 const Category = require('./models/category');
 const CategoryRoute=require('./routers/Categories');
+const userRoutes = require("./routers/users.js")
+const cartRoutes = require("./routers/cart.routes")
+const libraryRoutes = require("./routers/library.routes")
+const checkouteRoutes = require("./routers/checkout.routes")
+
+
 
 app.use((req, res, next) => {
     console.log('Raw Body:', req.body);
@@ -42,6 +48,13 @@ app.use('/uploads', express.static('uploads'));
 
 app.use('/products/games',GameRoute);
 app.use('/category',CategoryRoute);
+app.use("/users",userRoutes)
+app.use("/cart",cartRoutes)
+app.use("/library",libraryRoutes)
+app.use("/checkout",checkouteRoutes)
+
+
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 })
