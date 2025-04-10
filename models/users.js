@@ -29,7 +29,7 @@ const userSchema = mongoose.Schema({
         minlength: 8,
         maxlength:265,
         required: true,
-        select:false
+        // select:false
     },
     gender:{
         type:String,
