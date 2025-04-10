@@ -14,8 +14,6 @@ app.use(cors());
 app.options('*',cors());
 
 
-
-
 const Product = require('./models/Game');
 const GameRoute=require('./routers/GameRoutes');
 const Category = require('./models/category');
@@ -24,7 +22,6 @@ const userRoutes = require("./routers/users.js")
 const cartRoutes = require("./routers/cart.routes")
 const libraryRoutes = require("./routers/library.routes")
 const checkouteRoutes = require("./routers/checkout.routes")
-
 
 
 app.use((req, res, next) => {
