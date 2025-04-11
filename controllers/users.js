@@ -9,10 +9,10 @@ const isEmailRegistered = await User.findOne({email})
 const isUsernameRegisted = await User.findOne({username})
 
 if(isEmailRegistered){
-    return res.status(409).json("email is already registered")
+    return res.status(409).json("Email is already registered")
 }
 if(isUsernameRegisted){
-    return res.status(409).json("username is already registered")
+    return res.status(409).json("Username is already registered")
 }
 
 const hashedPassword = await bcrypt.hash(password,10)

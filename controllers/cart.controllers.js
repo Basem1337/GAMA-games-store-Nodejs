@@ -17,14 +17,14 @@ async function addToCart(req,res,next){
     const isFound = cart.items.includes(productId)
 
     if(isFound){
-        return res.status(302).json("Product already found in cart.")
+        return res.status(302).json("Game is already in cart.")
     }
 
     const library = await Library.findOne({user:userId})
     const hasGame = library?.games.includes(productId)
 
     if(hasGame){
-        return res.status(302).json("Product already found in library.")
+        return res.status(302).json("Game is already in library.")
     }
 
     cart.items.push(productId)
